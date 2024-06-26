@@ -1,0 +1,3 @@
+- start the server:
+  - run: `zig build && && ./zig-out/bin/http_server`
+- and try to get an answer: `curl http://127.0.0.1:8000`
