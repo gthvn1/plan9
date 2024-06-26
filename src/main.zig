@@ -8,15 +8,21 @@ fn start_server() !void {
     var stream = try std.net.Address.listen(address, .{ .reuse_address = true });
     defer stream.deinit();
 
-    // Wait for a connection
-    const connection = try stream.accept();
+    while (true) {
+        // Wait for a connection
+        const connection = try stream.accept();
 
-    var read_buffer = [_]u8{0} ** 4096;
-    var server = std.http.Server.init(connection, read_buffer[1..]);
+        var read_buffer = [_]u8{0} ** 4096;
+        var server = std.http.Server.init(connection, read_buffer[1..]);
+        defer connection.stream.close();
 
-    const request = server.receiveHead();
+        const request = try server.receiveHead();
+        const headers = request.head;
 
-    std.debug.print("{any}\n", .{request});
+        std.debug.print("{any}\n", .{headers});
+
+        _ = try connection.stream.write("Hello");
+    }
 }
 
 pub fn main() !void {
