@@ -16,12 +16,17 @@ fn start_server() !void {
         var server = std.http.Server.init(connection, read_buffer[1..]);
         defer connection.stream.close();
 
-        const request = try server.receiveHead();
+        var request = try server.receiveHead();
         const headers = request.head;
 
         std.debug.print("{any}\n", .{headers});
 
-        _ = try connection.stream.write("Hello");
+        try request.respond("Hello from server!\n", .{
+            .extra_headers = &.{
+                .{ .name = "content-type", .value = "text/plain" },
+            },
+            .keep_alive = false,
+        });
     }
 }
 
