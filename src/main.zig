@@ -1,5 +1,59 @@
 const std = @import("std");
 
+const index =
+    \\<!DOCTYPE html>
+    \\<html lang="en">
+    \\<head>
+    \\    <meta charset="UTF-8">
+    \\    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    \\    <title>Circle in a Box</title>
+    \\</head>
+    \\<body>
+    \\    <canvas id="myCanvas" width="800" height="600"></canvas>
+    \\    <script>
+    \\        // Function to draw a circle in a box on the canvas
+    \\        function drawCircleInBox(canvasId) {
+    \\            const canvas = document.getElementById(canvasId);
+    \\            if (!canvas) {
+    \\                console.error('Canvas element not found');
+    \\                return;
+    \\            }
+    \\
+    \\            const context = canvas.getContext('2d');
+    \\            if (!context) {
+    \\                console.error('2D context not found');
+    \\                return;
+    \\            }
+    \\
+    \\            // Set canvas size
+    \\            const width = canvas.width;
+    \\            const height = canvas.height;
+    \\
+    \\            // Draw the box
+    \\            context.fillStyle = '#DDDDDD';
+    \\            context.fillRect(0, 0, width, height);
+    \\
+    \\            // Draw the circle
+    \\            const centerX = width / 2;
+    \\            const centerY = height / 2;
+    \\            const radius = Math.min(width, height) / 4;
+    \\
+    \\            context.beginPath();
+    \\            context.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    \\            context.fillStyle = '#FF0000';
+    \\            context.fill();
+    \\            context.stroke();
+    \\        }
+    \\
+    \\        // Call the function when the window loads
+    \\        window.onload = () => {
+    \\            drawCircleInBox('myCanvas');
+    \\        };
+    \\    </script>
+    \\</body>
+    \\</html>
+;
+
 fn start_server() !void {
     const address = try std.net.Address.parseIp4("127.0.0.1", 8000);
 
@@ -21,9 +75,9 @@ fn start_server() !void {
 
         std.debug.print("{any}\n", .{headers});
 
-        try request.respond("Hello from server!\n", .{
+        try request.respond(index, .{
             .extra_headers = &.{
-                .{ .name = "content-type", .value = "text/plain" },
+                .{ .name = "content-type", .value = "text/html" },
             },
             .keep_alive = false,
         });
