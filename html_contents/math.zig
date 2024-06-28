@@ -16,17 +16,16 @@ export fn draw(s: [*]u8, length: usize, capacity: usize) i32 {
     return 0;
 }
 
-export fn sayHello(s: [*]u8, length: usize, capacity: usize) i32 {
+export fn speak(s: [*]u8, length: usize, capacity: usize) i32 {
     _ = length;
+    _ = capacity;
 
-    const hello = "hello";
-    const dest: []u8 = @ptrCast(s[0..capacity]);
+    const sentence = "All your codebase are belong to us";
+    const dest: []u8 = @ptrCast(s[0..sentence.len]);
 
-    std.mem.copyForwards(u8, dest, hello);
-    return hello.len;
-}
+    std.mem.copyForwards(u8, dest, sentence);
 
-export fn add(n1: i32, n2: i32) i32 {
-    ilog(38);
-    return n1 + n2;
+    ilog(sentence.len);
+
+    return sentence.len;
 }

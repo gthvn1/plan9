@@ -19,7 +19,7 @@ function drawCircleInBox(canvasId) {
     const height = canvas.height;
 
     // Draw the box
-    context.fillStyle = '#DDDDDD';
+    context.fillStyle = '#D8DEE9';
     context.fillRect(0, 0, width, height);
 
     // Draw the circle
@@ -29,7 +29,7 @@ function drawCircleInBox(canvasId) {
 
     context.beginPath();
     context.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-    context.fillStyle = '#FF0000';
+    context.fillStyle = '#EBCB8B';
     context.fill();
     context.stroke();
 }
@@ -69,19 +69,16 @@ async function callFuncFromZigWasm() {
 
   console.log(exports);
 
-  // We need to create a view on memory to get the output of sayHello
+  // We need to create a view on memory to get the output of speak
   const memory = exports.memory;
 
-  // Run sayHello, only first parameter is used. And it is the index in memory
-  const output_lenght = exports.sayHello(0, 1, 1);
-  console.log("sayHello retuns " + output_lenght);
+  // Run "speak", only first parameter is used. And it is the index in memory
+  const output_length = exports.speak(0, 1, 1);
+  console.log("speak returns: " + output_length);
 
-  const output_view = new Uint8Array(memory.buffer, 0, output_lenght);
+  const output_view = new Uint8Array(memory.buffer, 0, output_length);
   const output = new TextDecoder().decode(output_view);
-  console.log(output);
-
-  const answer_to_life = exports.add(30, 12);
-  document.getElementById('answer_from_zig').textContent = `ZIG: The answer to life, the universe, and everything is ${answer_to_life}`;
+  document.getElementById('answer_from_zig').textContent = "ZIG: " + output;
 
   // Now we can draw something in canvas_2
   const canvas = document.getElementById("canvas_2");
@@ -93,7 +90,7 @@ async function callFuncFromZigWasm() {
   // The lenght is the size of the canvas
   // A pixel is in ABGR format so we need 4 bytes, so capacity is size * 4
   const res = exports.draw(0, w * h, w * h * 4);
-  console.log("draw returns " + res);
+  console.log("draw returns: " + res);
 
   // We need to create a view and put it in image data.
   const canvas_view = new Uint8Array(memory.buffer, 0, w * h * 4);
