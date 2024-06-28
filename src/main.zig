@@ -7,9 +7,22 @@ const index =
     \\    <meta charset="UTF-8">
     \\    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     \\    <title>Circle in a Box</title>
+    \\    <style>
+    \\        body {
+    \\            background-color: #222; /* Fallback for older browsers */
+    \\            background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    \\            height: 100vh; /* Ensure the gradient covers the whole viewport */
+    \\            margin: 0; /* Remove default margin */
+    \\            display: flex;
+    \\            justify-content: center;
+    \\            align-items: center;
+    \\            color: #fff; /* Text color */
+    \\            font-family: Arial, sans-serif; /* Font style */
+    \\        }
+    \\    </style>
     \\</head>
     \\<body>
-    \\    <canvas id="myCanvas" width="800" height="600"></canvas>
+    \\    <canvas id="myCanvas" width="400" height="300"></canvas>
     \\    <script>
     \\        // Function to draw a circle in a box on the canvas
     \\        function drawCircleInBox(canvasId) {
