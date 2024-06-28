@@ -9,3 +9,6 @@
 
 - To run this: `zig build -Doptimize=ReleaseSmall && python3 -m http.server`
 
+# Links
+- [blog about zig and wasm](https://blog.mjgrzymek.com/blog/zigwasm)
+
