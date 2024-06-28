@@ -35,7 +35,7 @@ function drawCircleInBox(canvasId) {
 }
 
 // Importing from add.wasm
-async function load_wasm_wat() {
+async function loadWasmWat() {
   // https://developer.mozilla.org/en-US/docs/WebAssembly/JavaScript_interface/instantiate_static
   const importObject = {
     env: {
@@ -54,7 +54,7 @@ async function load_wasm_wat() {
   document.getElementById('answer_from_wat').textContent = `WAT: The answer to life, the universe, and everything is ${answer_to_life}`;
 }
 
-async function load_wasm_zig() {
+async function callFuncFromZigWasm() {
   // https://developer.mozilla.org/en-US/docs/WebAssembly/JavaScript_interface/instantiate_static
   const importObject = {
     env: {
@@ -71,10 +71,10 @@ async function load_wasm_zig() {
 
   // We need to create a view on memory to get the output of sayHello
   const memory = exports.memory;
-  const mem_view = new Uint8Array(memory.buffer);
 
-  const output_lenght = exports.sayHello(0, 1, mem_view.byteLength);
-  console.log(output_lenght);
+  // Run sayHello, only first parameter is used. And it is the index in memory
+  const output_lenght = exports.sayHello(0, 1, 1);
+  console.log("sayHello retuns " + output_lenght);
 
   const output_view = new Uint8Array(memory.buffer, 0, output_lenght);
   const output = new TextDecoder().decode(output_view);
@@ -82,12 +82,29 @@ async function load_wasm_zig() {
 
   const answer_to_life = exports.add(30, 12);
   document.getElementById('answer_from_zig').textContent = `ZIG: The answer to life, the universe, and everything is ${answer_to_life}`;
+
+  // Now we can draw something in canvas_2
+  const canvas = document.getElementById("canvas_2");
+  const context = canvas.getContext("2d");
+  const w = canvas.width;
+  const h = canvas.height;
+
+  // Now call draw,
+  // The lenght is the size of the canvas
+  // A pixel is in ABGR format so we need 4 bytes, so capacity is size * 4
+  const res = exports.draw(0, w * h, w * h * 4);
+  console.log("draw returns " + res);
+
+  // We need to create a view and put it in image data.
+  const canvas_view = new Uint8Array(memory.buffer, 0, w * h * 4);
+  const image_data = context.createImageData(w, h);
+  image_data.data.set(canvas_view);
+  context.putImageData(image_data, 0, 0);
 }
 
 // Call the function when the window loads
 window.onload = () => {
-  load_wasm_wat();
-  load_wasm_zig();
+  loadWasmWat();
+  callFuncFromZigWasm();
   drawCircleInBox('canvas_1');
-  drawCircleInBox('canvas_2');
 };
