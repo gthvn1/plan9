@@ -34,8 +34,7 @@ function drawCircleInBox(canvasId) {
     context.stroke();
 }
 
-
-async function load_wasm() {
+async function load_wasm_add() {
   // https://developer.mozilla.org/en-US/docs/WebAssembly/JavaScript_interface/instantiate_static
   const importObject = {
     imports: {
@@ -53,12 +52,29 @@ async function load_wasm() {
   console.log(exports);
 
   const answer_to_life = exports.add(30, 12);
-  document.getElementById('answer').textContent = `The answer to life, the universe, and everything is ${answer_to_life}`;
+  document.getElementById('answer_from_wat').textContent = `WAT: The answer to life, the universe, and everything is ${answer_to_life}`;
+}
+
+
+async function load_wasm_math() {
+  // https://developer.mozilla.org/en-US/docs/WebAssembly/JavaScript_interface/instantiate_static
+  const importObject = {};
+
+  const response = await fetch('./zig-out/bin/math.wasm');
+  const bytes = await response.arrayBuffer();
+  const buffer = await WebAssembly.instantiate(bytes, importObject);
+  const exports = buffer.instance.exports;
+
+  console.log(exports);
+
+  const answer_to_life = exports.add(30, 12);
+  document.getElementById('answer_from_zig').textContent = `ZIG: The answer to life, the universe, and everything is ${answer_to_life}`;
 }
 
 // Call the function when the window loads
 window.onload = () => {
-    load_wasm();
+    load_wasm_add();
+    load_wasm_math();
     drawCircleInBox('canvas_1');
     drawCircleInBox('canvas_2');
 };
