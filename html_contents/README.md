@@ -7,5 +7,5 @@
   - [x] try the same using a ZIG file and build it into WASM
 - [ ] play with the memory of the WASM file to draw something into the canvas...
 
-- To run this: `zig build && python3 -m http.server`
+- To run this: `zig build -Doptimize=ReleaseSmall && python3 -m http.server`
 

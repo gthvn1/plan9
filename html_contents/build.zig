@@ -9,6 +9,7 @@ pub fn build(b: *std.Build) void {
         .name = "math",
         .root_source_file = b.path("math.zig"),
         .target = target,
+        .optimize = b.standardOptimizeOption(.{}),
     });
 
     exe.entry = .disabled;
