@@ -69,6 +69,17 @@ async function load_wasm_zig() {
 
   console.log(exports);
 
+  // We need to create a view on memory to get the output of sayHello
+  const memory = exports.memory;
+  const mem_view = new Uint8Array(memory.buffer);
+
+  const output_lenght = exports.sayHello(0, 1, mem_view.byteLength);
+  console.log(output_lenght);
+
+  const output_view = new Uint8Array(memory.buffer, 0, output_lenght);
+  const output = new TextDecoder().decode(output_view);
+  console.log(output);
+
   const answer_to_life = exports.add(30, 12);
   document.getElementById('answer_from_zig').textContent = `ZIG: The answer to life, the universe, and everything is ${answer_to_life}`;
 }
