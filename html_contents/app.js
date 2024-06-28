@@ -34,8 +34,8 @@ function drawCircleInBox(canvasId) {
     context.stroke();
 }
 
-// We are importing add function.
-async function load_wasm_file(wasm_filename, element_id) {
+// Importing from add.wasm
+async function load_wasm_wat() {
   // https://developer.mozilla.org/en-US/docs/WebAssembly/JavaScript_interface/instantiate_static
   const importObject = {
     env: {
@@ -45,19 +45,38 @@ async function load_wasm_file(wasm_filename, element_id) {
     },
   };
 
-  const buffer = await WebAssembly.instantiateStreaming(fetch(wasm_filename), importObject);
+  const buffer = await WebAssembly.instantiateStreaming(fetch('add.wasm'), importObject);
   const exports = buffer.instance.exports;
 
   console.log(exports);
 
   const answer_to_life = exports.add(30, 12);
-  document.getElementById(element_id).textContent = `The answer to life, the universe, and everything is ${answer_to_life}`;
+  document.getElementById('answer_from_wat').textContent = `WAT: The answer to life, the universe, and everything is ${answer_to_life}`;
+}
+
+async function load_wasm_zig() {
+  // https://developer.mozilla.org/en-US/docs/WebAssembly/JavaScript_interface/instantiate_static
+  const importObject = {
+    env: {
+      ilog(arg) { // ilog stands for (i)mported (log)
+        console.log(arg);
+      },
+    },
+  };
+
+  const buffer = await WebAssembly.instantiateStreaming(fetch('./zig-out/bin/math.wasm'), importObject);
+  const exports = buffer.instance.exports;
+
+  console.log(exports);
+
+  const answer_to_life = exports.add(30, 12);
+  document.getElementById('answer_from_zig').textContent = `ZIG: The answer to life, the universe, and everything is ${answer_to_life}`;
 }
 
 // Call the function when the window loads
 window.onload = () => {
-  load_wasm_file('add.wasm', 'answer_from_wat');
-  load_wasm_file('./zig-out/bin/math.wasm', 'answer_from_zig');
+  load_wasm_wat();
+  load_wasm_zig();
   drawCircleInBox('canvas_1');
   drawCircleInBox('canvas_2');
 };
