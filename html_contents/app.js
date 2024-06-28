@@ -44,9 +44,7 @@ async function load_wasm_add() {
     },
   };
 
-  const response = await fetch('add.wasm');
-  const bytes = await response.arrayBuffer();
-  const buffer = await WebAssembly.instantiate(bytes, importObject);
+  const buffer = await WebAssembly.instantiateStreaming(fetch('add.wasm'), importObject);
   const exports = buffer.instance.exports;
 
   console.log(exports);
