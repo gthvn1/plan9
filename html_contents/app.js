@@ -56,7 +56,14 @@ async function load_wasm_add() {
 
 async function load_wasm_math() {
   // https://developer.mozilla.org/en-US/docs/WebAssembly/JavaScript_interface/instantiate_static
-  const importObject = {};
+  const importObject = {
+    env: { // zig import from env
+      ilog(arg) { // ilog stands for (i)mported (log). We cannot use log that is already used.
+        console.log(arg);
+      },
+    },
+  };
+
 
   const response = await fetch('./zig-out/bin/math.wasm');
   const bytes = await response.arrayBuffer();
