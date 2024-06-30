@@ -86,22 +86,28 @@ async function callFuncFromZigWasm() {
   const w = canvas.width;
   const h = canvas.height;
 
-  // Now call draw,
-  // The lenght is the size of the canvas
-  // A pixel is in ABGR format so we need 4 bytes, so capacity is size * 4
-  const res = exports.draw(0, w * h, w * h * 4);
-  console.log("draw returns: " + res);
+  function updateCanvas() {
+    // Now call draw,
+    // The lenght is the size of the canvas
+    // A pixel is in ABGR format so we need 4 bytes, so capacity is size * 4
+    const res = exports.draw(0, w * h, w * h * 4);
+    console.log("draw returns: " + res);
 
-  // We need to create a view and put it in image data.
-  const canvas_view = new Uint8Array(memory.buffer, 0, w * h * 4);
-  const image_data = context.createImageData(w, h);
-  image_data.data.set(canvas_view);
-  context.putImageData(image_data, 0, 0);
+    // We need to create a view and put it in image data.
+    const canvas_view = new Uint8Array(memory.buffer, 0, w * h * 4);
+    const image_data = context.createImageData(w, h);
+    image_data.data.set(canvas_view);
+    context.putImageData(image_data, 0, 0);
+    window.requestAnimationFrame(updateCanvas);
+  }
+
+  updateCanvas();
+
 }
 
 // Call the function when the window loads
 window.onload = () => {
   loadWasmWat();
-  callFuncFromZigWasm();
   drawCircleInBox('canvas_1');
+  callFuncFromZigWasm();
 };
