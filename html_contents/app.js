@@ -98,11 +98,40 @@ async function callFuncFromZigWasm() {
     const image_data = context.createImageData(w, h);
     image_data.data.set(canvas_view);
     context.putImageData(image_data, 0, 0);
-    window.requestAnimationFrame(updateCanvas);
+    // Disable animation for now, it is easy to debug
+    //window.requestAnimationFrame(updateCanvas);
   }
 
   updateCanvas();
+}
 
+async function callFuncJson() {
+  // https://developer.mozilla.org/en-US/docs/WebAssembly/JavaScript_interface/instantiate_static
+  const importObject = {};
+
+  const buffer = await WebAssembly.instantiateStreaming(fetch('./zig-out/bin/json.wasm'), importObject);
+  const exports = buffer.instance.exports;
+  const memory = exports.memory;
+
+  function reverseNamesNice(data) {
+    const input = JSON.stringify(data);
+
+    const memoryView = new Uint8Array(memory.buffer);
+    const { written } = new TextEncoder().encodeInto(input, memoryView);
+
+    const outputLength = exports.reverseNames(0, written, memoryView.byteLength);
+
+    const outputView = new Uint8Array(memory.buffer, 0, outputLength);
+    const output = new TextDecoder().decode(outputView);
+    return JSON.parse(output);
+  }
+
+  console.log(
+    reverseNamesNice([
+      { name: 'John', id: 1 },
+      { name: 'Doe', id: 2 },
+    ])
+  );
 }
 
 // Call the function when the window loads
@@ -110,4 +139,5 @@ window.onload = () => {
   loadWasmWat();
   drawCircleInBox('canvas_1');
   callFuncFromZigWasm();
+  callFuncJson();
 };
